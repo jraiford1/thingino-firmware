@@ -1,7 +1,7 @@
 PRUDYNT_T_SITE_METHOD = git
-PRUDYNT_T_SITE = https://github.com/themactep/prudynt-t
-PRUDYNT_T_SITE_BRANCH = stable
-PRUDYNT_T_VERSION = 6e4803405051f8b3183aab5d64547a0fcaa21456
+PRUDYNT_T_SITE = https://github.com/jraiford1/prudynt-t
+PRUDYNT_T_SITE_BRANCH = image-zoom
+PRUDYNT_T_VERSION = cde33ca8959b2bf8a0ead7c19d443b2c0bee0ea2
 
 PRUDYNT_T_OVERRIDE_FILE = $(BR2_EXTERNAL_THINGINO_PATH)/$(CAMERA_SUBDIR)/$(CAMERA)/prudynt.json
 
