@@ -55,7 +55,9 @@
       if (image.zoom === undefined) {
         status("This streamer has no digital zoom support.");
         el("zoom-apply").disabled = true;
+        return;
       }
+      status("Main stream now " + (await liveSize()) + ".");
     } catch (err) {
       status("Could not read the zoom settings: " + err.message);
     }
@@ -76,17 +78,22 @@
     return values;
   }
 
-  // Report the resulting main stream size and refresh the size fields above.
+  // The live main stream size.  GET /stream0 returns the saved request
+  // (0 = automatic); a query with null values returns the live geometry.
+  async function liveSize() {
+    var res = await api("", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stream0: { width: null, height: null } }),
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    var s0 = (await res.json()).stream0 || {};
+    return s0.width + " x " + s0.height;
+  }
+
   async function showResult() {
     try {
-      var res = await api("/stream0", { cache: "no-store" });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      var s0 = await res.json();
-      ["width", "height"].forEach(function (name) {
-        var input = el("stream0_" + name);
-        if (input && s0[name] !== undefined) input.value = s0[name];
-      });
-      status("Applied: main stream " + s0.width + " x " + s0.height + ".");
+      status("Applied: main stream now " + (await liveSize()) + ".");
     } catch (err) {
       status("Applied; could not read the new stream size: " + err.message);
     } finally {
