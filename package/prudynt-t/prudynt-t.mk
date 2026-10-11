@@ -339,6 +339,13 @@ define PRUDYNT_T_INSTALL_TARGET_CMDS
 		$(TARGET_DIR)/usr/sbin/microphone
 	$(INSTALL) -D -m 0755 $(PRUDYNT_T_PKGDIR)/files/speaker \
 		$(TARGET_DIR)/usr/sbin/speaker
+	# scripts (digital zoom; ptz_zoom_* are the ONVIF move_in/move_out hooks)
+	$(INSTALL) -D -m 0755 $(PRUDYNT_T_PKGDIR)/files/zoom \
+		$(TARGET_DIR)/usr/sbin/zoom
+	$(INSTALL) -D -m 0755 $(PRUDYNT_T_PKGDIR)/files/ptz_zoom_in \
+		$(TARGET_DIR)/sbin/ptz_zoom_in
+	$(INSTALL) -D -m 0755 $(PRUDYNT_T_PKGDIR)/files/ptz_zoom_out \
+		$(TARGET_DIR)/sbin/ptz_zoom_out
 	$(INSTALL) -D -m 0755 $(PRUDYNT_T_PKGDIR)/files/play \
 		$(TARGET_DIR)/usr/sbin/play
 	$(INSTALL) -D -m 0755 $(PRUDYNT_T_PKGDIR)/files/record \
@@ -442,6 +449,8 @@ define PRUDYNT_T_INSTALL_TARGET_CMDS
 		$(TARGET_DIR)/var/www/a/preview-fmp4.js
 	$(INSTALL) -D -m 0644 $(PRUDYNT_T_PKGDIR)/files/www/a/audio.js \
 		$(TARGET_DIR)/var/www/a/audio.js
+	$(INSTALL) -D -m 0644 $(PRUDYNT_T_PKGDIR)/files/www/a/streamer-zoom.js \
+		$(TARGET_DIR)/var/www/a/streamer-zoom.js
 	$(INSTALL) -D -m 0644 $(PRUDYNT_T_PKGDIR)/files/www/a/sei-osd.js \
 		$(TARGET_DIR)/var/www/a/sei-osd.js
 	$(INSTALL) -D -m 0644 $(PRUDYNT_T_PKGDIR)/files/www/a/config-rtsp.js \

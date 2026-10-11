@@ -1,0 +1,3 @@
+#!/bin/sh
+# ONVIF continuous zoom in (see /etc/onvif.json ptz.move_in)
+exec /usr/sbin/zoom in

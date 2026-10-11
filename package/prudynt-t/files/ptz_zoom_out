@@ -1,0 +1,3 @@
+#!/bin/sh
+# ONVIF continuous zoom out (see /etc/onvif.json ptz.move_out)
+exec /usr/sbin/zoom out

@@ -1,0 +1,82 @@
+#!/bin/sh
+# Digital zoom for prudynt.
+#
+#   zoom                      show the current zoom
+#   zoom in | out             step the zoom by 25%, between 100% and 400%
+#   zoom off                  full sensor view (100%)
+#   zoom <100-800> [X Y]      set the zoom, optionally with the window centre
+#                             as a percent of the sensor width and height
+#
+# prudynt applies a change by rebuilding its video channels in place (about
+# a second without video); the streamer process keeps running.  Changes go
+# through the local HTTP API, which saves them (prudyntctl changes are not
+# saved).
+
+STEP=25
+STEP_MIN=100
+STEP_MAX=400
+API_URL="http://127.0.0.1:8080/api/v1/config"
+API_KEY_FILE="/etc/thingino-api.key"
+
+get() {
+	printf '{"image":{"%s":null}}\n' "$1" | prudyntctl json - 2>/dev/null |
+		sed -n "s/.*\"$1\":\([0-9]*\).*/\1/p"
+}
+
+usage() {
+	echo "Usage: $0 [in|out|off|<100-800> [center_x center_y]]" >&2
+	exit 1
+}
+
+is_number() {
+	case "$1" in '' | *[!0-9]*) return 1 ;; esac
+	return 0
+}
+
+cur=$(get zoom)
+is_number "$cur" || { echo "prudynt is not running" >&2; exit 1; }
+
+case "$1" in
+"")
+	echo "zoom ${cur}%, centre $(get zoom_center_x)% $(get zoom_center_y)%"
+	exit 0
+	;;
+in) new=$((cur + STEP)) ;;
+out) new=$((cur - STEP)) ;;
+off) new=100 ;;
+*)
+	is_number "$1" || usage
+	new=$1
+	;;
+esac
+
+case "$1" in
+in | out)
+	[ "$new" -lt "$STEP_MIN" ] && new=$STEP_MIN
+	[ "$new" -gt "$STEP_MAX" ] && new=$STEP_MAX
+	;;
+*)
+	if [ "$new" -lt 100 ] || [ "$new" -gt 800 ]; then usage; fi
+	;;
+esac
+
+centre=""
+if [ -n "$2" ] || [ -n "$3" ]; then
+	is_number "$2" && is_number "$3" || usage
+	if [ "$2" -gt 100 ] || [ "$3" -gt 100 ]; then usage; fi
+	centre=",\"zoom_center_x\":$2,\"zoom_center_y\":$3"
+fi
+
+if [ "$new" -eq "$cur" ] && [ -z "$centre" ]; then
+	echo "zoom ${cur}% (unchanged)"
+	exit 0
+fi
+
+api_key=$(tr -d '\n\r ' <"$API_KEY_FILE" 2>/dev/null)
+[ -n "$api_key" ] || { echo "no API key in $API_KEY_FILE" >&2; exit 1; }
+curl -s -f -X POST "$API_URL" \
+	-H "X-API-Key: $api_key" \
+	-H "Content-Type: application/json" \
+	-d "$(printf '{"image":{"zoom":%d%s}}' "$new" "$centre")" >/dev/null ||
+	{ echo "failed to set zoom" >&2; exit 1; }
+echo "zoom ${new}%"

@@ -106,6 +106,35 @@
         <i class="bi bi-floppy me-1"></i> Save configuration to file
       </button>
     </section>
+
+    <section class="mt-4">
+      <h3>Digital Zoom</h3>
+      <p class="text-body-secondary">Crops the sensor at native resolution and never upscales: at 200% the
+        main stream is half the sensor size. Applying saves the zoom and briefly rebuilds the video channels.</p>
+      <div class="row g-2 align-items-end">
+        <div class="col-6 col-md-3">
+          <label for="image_zoom" class="form-label">Zoom, %</label>
+          <input type="number" id="image_zoom" class="form-control" min="100" max="800" step="5" value="">
+          <span class="form-text">100 = off</span>
+        </div>
+        <div class="col-6 col-md-3">
+          <label for="image_zoom_center_x" class="form-label">Centre X, %</label>
+          <input type="number" id="image_zoom_center_x" class="form-control" min="0" max="100" step="1" value="">
+          <span class="form-text">0 = left edge</span>
+        </div>
+        <div class="col-6 col-md-3">
+          <label for="image_zoom_center_y" class="form-label">Centre Y, %</label>
+          <input type="number" id="image_zoom_center_y" class="form-control" min="0" max="100" step="1" value="">
+          <span class="form-text">0 = top edge</span>
+        </div>
+        <div class="col-6 col-md-3">
+          <button type="button" id="zoom-apply" class="btn btn-secondary w-100 mb-4">
+            <i class="bi bi-zoom-in me-1"></i> Apply zoom
+          </button>
+        </div>
+      </div>
+      <p id="zoom-status" class="form-text" role="status"></p>
+    </section>
   </div>
 </main>
 
@@ -120,6 +149,7 @@
 <script src="/a/footer.js"></script>
 <script src="/a/preview.js"></script>
 <script src="/a/streamer-config.js"></script>
+<script src="/a/streamer-zoom.js"></script>
 <script src="/a/sei-rotate.js"></script>
 </body>
 </html>
